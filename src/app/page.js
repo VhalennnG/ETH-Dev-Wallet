@@ -1,113 +1,154 @@
-import Image from "next/image";
+"use client";
+import React, { useState } from "react";
+import { connectWallet, getBalance, transferTokens } from "../utils/web3Utils";
+import { Shield, Wallet, ArrowRightLeft } from "lucide-react";
 
 export default function Home() {
+  const [account, setAccount] = useState("");
+  const [contract, setContract] = useState(null);
+  const [balance, setBalance] = useState("0");
+  const [recipient, setRecipient] = useState("");
+  const [amount, setAmount] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleConnect = async () => {
+    try {
+      const { account, contract, balance } = await connectWallet();
+      setAccount(account);
+      setContract(contract);
+      setBalance(balance);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  };
+
+  const handleTransfer = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await transferTokens(contract, account, recipient, amount);
+      const newBalance = await getBalance(contract, account);
+      setBalance(newBalance);
+      setRecipient("");
+      setAmount("");
+      alert("Transfer successful!");
+    } catch (error) {
+      console.error("Transfer error:", error);
+      alert("Transfer failed: " + error.message);
+    }
+    setLoading(false);
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <div className='min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8'>
+      {/* Animated background grid */}
+      <div className='fixed inset-0 opacity-20'>
+        <div className='absolute inset-0 grid grid-cols-12 gap-4'>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              className='h-full w-px bg-cyan-500/10 animate-pulse'
+              style={{ animationDelay: `${i * 0.1}s` }}
             />
-          </a>
+          ))}
+        </div>
+        <div className='absolute inset-0 grid grid-rows-12 gap-4'>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              className='w-full h-px bg-purple-500/10 animate-pulse'
+              style={{ animationDelay: `${i * 0.1}s` }}
+            />
+          ))}
         </div>
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div className='max-w-xl mx-auto'>
+        {/* Header */}
+        <div className='text-center mb-12'>
+          <div className='flex items-center justify-center mb-4'>
+            <Shield className='w-12 h-12 text-cyan-400' />
+          </div>
+          <h1 className='text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400'>
+            SY COIN
+          </h1>
+          <p className='text-cyan-400 mt-2 tracking-widest'>
+            SECURE TRANSACTION INTERFACE
+          </p>
+        </div>
+
+        <div className='bg-gray-800/50 backdrop-blur-xl rounded-xl border border-gray-700 shadow-2xl p-8'>
+          {!account ? (
+            <button
+              onClick={handleConnect}
+              className='w-full group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg overflow-hidden transition-all duration-300 hover:scale-105'>
+              <div className='absolute inset-0 bg-white/20 translate-y-12 group-hover:translate-y-0 transition-transform duration-300' />
+              <div className='relative flex items-center justify-center gap-3'>
+                <Wallet className='w-6 h-6' />
+                <span className='font-semibold'>CONNECT WALLET</span>
+              </div>
+            </button>
+          ) : (
+            <div className='space-y-6'>
+              {/* Account Info */}
+              <div className='p-4 rounded-lg bg-gray-900/50 border border-gray-700'>
+                <p className='text-cyan-400 text-xs mb-1'>CONNECTED WALLET</p>
+                <p className='font-mono text-gray-300 text-sm truncate'>
+                  {account}
+                </p>
+              </div>
+
+              {/* Balance */}
+              <div className='p-4 rounded-lg bg-gray-900/50 border border-gray-700'>
+                <p className='text-purple-400 text-xs mb-1'>BALANCE</p>
+                <p className='text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400'>
+                  {balance} SYC
+                </p>
+              </div>
+
+              {/* Transfer Form */}
+              <form onSubmit={handleTransfer} className='space-y-4'>
+                <div>
+                  <label className='text-cyan-400 text-xs'>RECIPIENT ID</label>
+                  <input
+                    type='text'
+                    value={recipient}
+                    onChange={(e) => setRecipient(e.target.value)}
+                    className='mt-1 w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-gray-300 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all'
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className='text-purple-400 text-xs'>AMOUNT</label>
+                  <input
+                    type='number'
+                    step='0.000000000000000001'
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className='mt-1 w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-gray-300 focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all'
+                    required
+                  />
+                </div>
+
+                <button
+                  type='submit'
+                  disabled={loading}
+                  className='w-full group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100'>
+                  <div className='absolute inset-0 bg-white/20 translate-y-12 group-hover:translate-y-0 transition-transform duration-300' />
+                  <div className='relative flex items-center justify-center gap-3'>
+                    <ArrowRightLeft className='w-6 h-6' />
+                    <span className='font-semibold'>
+                      {loading ? "PROCESSING..." : "INITIATE TRANSFER"}
+                    </span>
+                  </div>
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
       </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   );
 }

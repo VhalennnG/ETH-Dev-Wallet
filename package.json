@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@openzeppelin/contracts": "^4.5.0",
+    "lucide-react": "^0.475.0",
+    "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.3"
+    "react-icons": "^5.4.0",
+    "web3": "^4.16.0"
   },
   "devDependencies": {
     "postcss": "^8",
