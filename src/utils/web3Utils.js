@@ -43,3 +43,16 @@ export const transferTokens = async (contract, from, to, amount) => {
     gasPrice: await web3.eth.getGasPrice(),
   });
 };
+
+// Fungsi untuk mengirim ETH dan menerima SYC
+export const sendETHForSYC = async (contract, from, amountInETH) => {
+  const web3 = new Web3(window.ethereum);
+  const amountInWei = web3.utils.toWei(amountInETH.toString(), "ether");
+
+  await contract.methods.buySYC().send({
+    from,
+    value: amountInWei,
+    gas: 100000,
+    gasPrice: await web3.eth.getGasPrice(),
+  });
+};

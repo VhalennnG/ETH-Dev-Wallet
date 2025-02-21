@@ -1,6 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { connectWallet, getBalance, transferTokens } from "../utils/web3Utils";
+import {
+  connectWallet,
+  getBalance,
+  transferTokens,
+  sellSYCForETH,
+} from "../utils/web3Utils";
 import { Shield, Wallet, ArrowRightLeft } from "lucide-react";
 
 export default function Home() {
