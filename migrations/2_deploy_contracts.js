@@ -1,7 +1,7 @@
 const SYCoin = artifacts.require("SYCoin");
 
 module.exports = async function (deployer, network, accounts) {
-  const initialSupply = "10";
+  const initialSupply = "1000";
   await deployer.deploy(SYCoin, initialSupply);
 
   const syc = await SYCoin.deployed();

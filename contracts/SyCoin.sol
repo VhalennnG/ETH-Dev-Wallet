@@ -1,10 +1,14 @@
+// contracts/SYCoin.sol
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SYCoin is ERC20, Ownable {
-    uint256 public constant RATE = 1 ether; 
+    // 1 SYC = 1 ETH  (konversi di-keep konsisten dengan decimals 18)
+    // RATE = berapa wei per 1 SYC (di sini 1 ETH)
+    uint256 public constant RATE = 1 ether;
 
     constructor(uint256 initialSupply) ERC20("SY Coin", "SYC") {
         _mint(msg.sender, initialSupply * 10 ** decimals());
@@ -12,25 +16,29 @@ contract SYCoin is ERC20, Ownable {
 
     function buySYC() public payable {
         require(msg.value > 0, "Harus mengirim ETH");
-        uint256 sycAmount = msg.value / RATE; 
+        // sycAmount dalam smallest unit (18 desimal)
+        //  syc = (wei * 10^decimals) / RATE
+        uint256 sycAmount = (msg.value * (10 ** decimals())) / RATE;
         _mint(msg.sender, sycAmount);
     }
 
     function sellSYC(uint256 sycAmount) public {
         require(balanceOf(msg.sender) >= sycAmount, "Saldo SYC tidak cukup");
-        uint256 ethAmount = sycAmount * RATE; 
-        _burn(msg.sender, sycAmount); 
-        payable(msg.sender).transfer(ethAmount);
+        // ethAmount = (syc * RATE) / 10^decimals
+        uint256 ethAmount = (sycAmount * RATE) / (10 ** decimals());
+        _burn(msg.sender, sycAmount);
+        (bool ok, ) = payable(msg.sender).call{value: ethAmount}("");
+        require(ok, "Gagal transfer ETH");
     }
 
     function withdrawETH() public onlyOwner {
-        payable(owner()).transfer(address(this).balance);
+        (bool ok, ) = payable(owner()).call{value: address(this).balance}("");
+        require(ok, "Gagal withdraw");
     }
 
-    // Fungsi untuk menerima ETH dan mengonversinya ke SYC
     receive() external payable {
         require(msg.value > 0, "Harus mengirim ETH");
-        uint256 sycAmount = msg.value / RATE;
+        uint256 sycAmount = (msg.value * (10 ** decimals())) / RATE;
         _mint(msg.sender, sycAmount);
     }
 }
