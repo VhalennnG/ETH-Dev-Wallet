@@ -85,7 +85,7 @@ export default function ConnectWallet() {
   const sellSYC = async (sycHuman) => {
     if (!web3 || !active) return;
     const c = await getSYCoinContract(web3);
-    const amount = Web3.utils.toWei(sycHuman, "ether"); // 18 desimal
+    const amount = Web3.utils.toWei(sycHuman, "ether"); 
     await c.methods.sellSYC(amount).send({ from: active });
   };
 
