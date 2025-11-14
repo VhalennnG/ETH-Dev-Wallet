@@ -6,8 +6,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SYCoin is ERC20, Ownable {
-    // 1 SYC = 1 ETH  (konversi di-keep konsisten dengan decimals 18)
-    // RATE = berapa wei per 1 SYC (di sini 1 ETH)
     uint256 public constant RATE = 1 ether;
 
     constructor(uint256 initialSupply) ERC20("SY Coin", "SYC") {
