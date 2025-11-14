@@ -14,8 +14,6 @@ contract SYCoin is ERC20, Ownable {
 
     function buySYC() public payable {
         require(msg.value > 0, "Harus mengirim ETH");
-        // sycAmount dalam smallest unit (18 desimal)
-        //  syc = (wei * 10^decimals) / RATE
         uint256 sycAmount = (msg.value * (10 ** decimals())) / RATE;
         _mint(msg.sender, sycAmount);
     }
