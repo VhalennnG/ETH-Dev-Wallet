@@ -46,6 +46,7 @@ function formatUnits(bi, decimals = 18, maxFrac = 6) {
 
 export default function HomePage() {
   const [rpcUrl, setRpcUrl] = useState(DEFAULT_RPC);
+  
   const [web3, setWeb3] = useState(null);
   const [connecting, setConnecting] = useState(false);
   const [chainId, setChainId] = useState(null);
