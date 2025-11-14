@@ -64,7 +64,7 @@ export default function ConnectWallet() {
   };
 
   const switchAccount = (acc) => {
-    setActive(acc); // gunakan acc ini sebagai "from" saat send tx
+    setActive(acc); 
   };
 
   const readBalance = async () => {
