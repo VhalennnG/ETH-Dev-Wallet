@@ -3,6 +3,7 @@
 import React from "react";
 
 export default function AccountPicker({ accounts, active, onSelect }) {
+  // null fallback
   if (!accounts || !accounts.length) return null;
   return (
     <div className="flex items-center gap-2">
