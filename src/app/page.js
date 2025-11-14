@@ -78,11 +78,11 @@ export default function HomePage() {
       const accs = await w3.eth.getAccounts();
       setAccounts(accs);
       setStatus(
-        `Connected to ${rpcUrl} (chainId ${cid}). Ditemukan ${accs.length} akun.`
+        `Connected to ${rpcUrl} (chainId ${cid}). Found ${accs.length} account.`
       );
       setStatusType("success");
     } catch (e) {
-      setStatus(`Gagal connect: ${toError(e)}`);
+      setStatus(`Fail to connect: ${toError(e)}`);
       setStatusType("error");
       setWeb3(null);
       setChainId(null);
@@ -134,7 +134,7 @@ export default function HomePage() {
 
   const doTransferEth = async () => {
     try {
-      if (!web3) throw new Error("Belum connect.");
+      if (!web3) throw new Error("Not connected.");
       if (!fromEth || !toEth) throw new Error("Pilih akun asal & tujuan.");
       if (!amountEth) throw new Error("Isi jumlah ETH.");
       const wei = parseUnitsDecimal(amountEth, 18);
@@ -170,7 +170,7 @@ export default function HomePage() {
       onChange={(e) => onChange(e.target.value)}
     >
       <option value="" className="text-gray-700">
-        -- pilih akun --
+        -- Choose Account --
       </option>
       {accounts.map((a) => (
         <option key={a} value={a} className="text-gray-900">
@@ -246,7 +246,7 @@ export default function HomePage() {
             ETH Dashboard
           </h1>
           <p className="text-lg text-gray-700">
-            Interaksi dengan Ganache menggunakan web3.js
+            Interacting with Ganache using web3.js
           </p>
         </div>
 
@@ -258,7 +258,7 @@ export default function HomePage() {
                 <WalletIcon className="h-6 w-6 text-blue-600" />
               </div>
               <h2 className="text-xl font-bold text-gray-900">
-                Koneksi ke Ganache
+                Connect to Ganache
               </h2>
             </div>
 
@@ -337,7 +337,7 @@ export default function HomePage() {
                   <WalletIcon className="h-6 w-6 text-green-600" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  Akun & Saldo
+                  Account & Balance
                 </h2>
               </div>
               <button
@@ -382,7 +382,7 @@ export default function HomePage() {
             ) : (
               <div className="text-center py-8 bg-gray-50 rounded-lg">
                 <p className="text-gray-700">
-                  Tidak ada akun. Pastikan Ganache berjalan.
+                  No account found. Make sure Ganache is running.
                 </p>
               </div>
             )}
@@ -400,19 +400,19 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Dari (From)
+                  From
                 </label>
                 {renderAccountSelect(fromEth, setFromEth, "fromEth")}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ke (To)
+                  To
                 </label>
                 {renderAccountSelect(toEth, setToEth, "toEth")}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Jumlah (ETH)
+                  Total (ETH)
                 </label>
                 <input
                   type="text"
@@ -461,7 +461,7 @@ export default function HomePage() {
                 ) : (
                   <>
                     <ArrowUpTrayIcon className="h-4 w-4 mr-1" />
-                    Kirim ETH
+                    Send ETH
                   </>
                 )}
               </button>
